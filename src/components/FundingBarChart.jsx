@@ -31,3 +31,35 @@ function FundingBarChart({ data }) {
 }
 
 export default FundingBarChart;
+import { Line } from "react-chartjs-2";
+
+function FundingLineChart({ data }) {
+  const trendsByIndustry = {};
+
+  data.forEach(entry => {
+    const { industry, year, funding } = entry;
+    if (!trendsByIndustry[industry]) {
+      trendsByIndustry[industry] = {};
+    }
+    trendsByIndustry[industry][year] = (trendsByIndustry[industry][year] || 0) + funding;
+  });
+
+  const chartData = {
+    labels: [...new Set(data.map(entry => entry.year))].sort(),
+    datasets: Object.keys(trendsByIndustry).map(industry => ({
+      label: industry,
+      data: chartData.labels.map(year => trendsByIndustry[industry][year] || 0),
+      fill: false,
+      borderColor: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+    })),
+  };
+
+  return (
+    <div className="mb-8">
+      <h2 className="text-xl font-semibold mb-2">Funding Trends by Industry</h2>
+      <Line data={chartData} />
+    </div>
+  );
+}
+
+export { FundingLineChart };

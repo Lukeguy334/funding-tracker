@@ -47,30 +47,11 @@ function IndustryTrendChart({ data }) {
     datasets,
   };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "bottom",
-      },
-      tooltip: {
-        mode: "index",
-        intersect: false,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
   return (
     <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-2">Funding Trends by Industry</h2>
-      <Line data={chartData} options={chartOptions} />
+     <h2 className="text-xl font-semibold mb-2">Funding Trends by Industry</h2>
+     <Line data={chartData} options={chartOptions} />
     </div>
-  );
-}
-
-export default IndustryTrendChart;
+    );
+  
+  }
