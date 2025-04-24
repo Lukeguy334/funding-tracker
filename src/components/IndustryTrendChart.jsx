@@ -6,7 +6,7 @@ import {
   CategoryScale,
   LinearScale,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 
 ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -32,10 +32,9 @@ function IndustryTrendChart({ data }) {
     label: industry,
     data: years.map(year => yearData[year] || 0),
     borderColor: getRandomColor(),
-    backgroundColor: "transparent",
-    borderWidth: 3,
-    pointRadius: 4,
-    pointHoverRadius: 6,
+    borderWidth: 2,
+    pointRadius: 3,
+    pointHoverRadius: 5,
     tension: 0.3,
   }));
 
@@ -44,27 +43,27 @@ function IndustryTrendChart({ data }) {
     datasets,
   };
 
-  const chartOptions = {
+  const options = {
     responsive: true,
     plugins: {
       legend: { position: "bottom" },
       tooltip: { mode: "index", intersect: false },
     },
     scales: {
-      x: {
-        title: { display: true, text: "Year" },
-      },
       y: {
         beginAtZero: true,
         title: { display: true, text: "Funding Amount ($)" },
+      },
+      x: {
+        title: { display: true, text: "Year" },
       },
     },
   };
 
   return (
-    <div>
+    <div className="mb-8">
       <h2 className="text-xl font-semibold mb-2">Funding Trends by Industry</h2>
-      <Line data={chartData} options={chartOptions} />
+      <Line data={chartData} options={options} />
     </div>
   );
 }

@@ -1,21 +1,23 @@
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  BarElement,
   CategoryScale,
   LinearScale,
+  BarElement,
+  Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function FundingBarChart({ data }) {
   const totalsByYear = {};
 
   data.forEach(entry => {
-    const year = entry.year;
-    totalsByYear[year] = (totalsByYear[year] || 0) + entry.amount;
+    if (entry.year && entry.amount) {
+      totalsByYear[entry.year] = (totalsByYear[entry.year] || 0) + entry.amount;
+    }
   });
 
   const labels = Object.keys(totalsByYear).sort();
@@ -27,9 +29,7 @@ function FundingBarChart({ data }) {
       {
         label: "Total Funding by Year ($)",
         data: values,
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
       },
     ],
   };
@@ -38,25 +38,20 @@ function FundingBarChart({ data }) {
     responsive: true,
     plugins: {
       legend: { display: false },
-      tooltip: { mode: "index", intersect: false },
+      title: { display: true, text: "Total Startup Funding per Year" },
     },
     scales: {
-      x: {
-        title: { display: true, text: "Year" },
-      },
       y: {
         beginAtZero: true,
-        title: { display: true, text: "Total Funding ($)" },
+        title: { display: true, text: "Funding ($)" },
+      },
+      x: {
+        title: { display: true, text: "Year" },
       },
     },
   };
 
-  return (
-    <div className="mb-8">
-      <h2 className="text-xl font-semibold mb-2">Total Funding by Year</h2>
-      <Bar data={chartData} options={options} />
-    </div>
-  );
+  return <Bar data={chartData} options={options} />;
 }
 
 export default FundingBarChart;
