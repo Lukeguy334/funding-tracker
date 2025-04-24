@@ -5,11 +5,11 @@ import {
   PointElement,
   CategoryScale,
   LinearScale,
-  Legend,
-  Tooltip
+  Tooltip,
+  Legend
 } from "chart.js";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Legend, Tooltip);
+ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function IndustryTrendChart({ data }) {
   const grouped = {};
@@ -18,17 +18,14 @@ function IndustryTrendChart({ data }) {
     if (!grouped[entry.industry]) {
       grouped[entry.industry] = {};
     }
-    grouped[entry.industry][entry.year] = (grouped[entry.industry][entry.year] || 0) + entry.funding;
+    grouped[entry.industry][entry.year] = (grouped[entry.industry][entry.year] || 0) + entry.amount;
   });
 
-  const years = Array.from(new Set(data.map(d => d.year))).sort();
+  const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => a - b);
 
-  // Helper to generate bright, readable colors
   const getRandomColor = () => {
-    const r = Math.floor(100 + Math.random() * 155);
-    const g = Math.floor(100 + Math.random() * 155);
-    const b = Math.floor(100 + Math.random() * 155);
-    return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 70%, 50%)`;
   };
 
   const datasets = Object.entries(grouped).map(([industry, yearData]) => ({
@@ -52,6 +49,10 @@ function IndustryTrendChart({ data }) {
     plugins: {
       legend: {
         position: "bottom",
+        labels: {
+          usePointStyle: true,
+          boxWidth: 10,
+        },
       },
       tooltip: {
         mode: "index",
@@ -61,8 +62,18 @@ function IndustryTrendChart({ data }) {
     scales: {
       y: {
         beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Funding Amount ($)',
+        }
       },
-    },
+      x: {
+        title: {
+          display: true,
+          text: 'Year',
+        }
+      }
+    }
   };
 
   return (
