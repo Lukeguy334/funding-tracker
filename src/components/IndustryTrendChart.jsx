@@ -14,6 +14,7 @@ ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip,
 function IndustryTrendChart({ data }) {
   const grouped = {};
 
+  // Group data by industry and year
   data.forEach(entry => {
     if (!grouped[entry.industry]) {
       grouped[entry.industry] = {};
@@ -28,15 +29,17 @@ function IndustryTrendChart({ data }) {
     return `hsl(${hue}, 70%, 50%)`;
   };
 
-  const datasets = Object.entries(grouped).map(([industry, yearData]) => ({
-    label: industry,
-    data: years.map(year => yearData[year] || 0),
-    borderColor: getRandomColor(),
-    borderWidth: 2,
-    pointRadius: 3,
-    pointHoverRadius: 5,
-    tension: 0.3,
-  }));
+  const datasets = Object.entries(grouped)
+    .filter(([_, yearData]) => Object.keys(yearData).length >= 2) // ✅ filter: keep only industries with data in ≥ 2 years
+    .map(([industry, yearData]) => ({
+      label: industry,
+      data: years.map(year => yearData[year] || 0),
+      borderColor: getRandomColor(),
+      borderWidth: 2,
+      pointRadius: 3,
+      pointHoverRadius: 5,
+      tension: 0.3,
+    }));
 
   const chartData = {
     labels: years,
