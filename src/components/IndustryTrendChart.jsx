@@ -5,11 +5,11 @@ import {
   PointElement,
   CategoryScale,
   LinearScale,
-  Legend,
-  Tooltip
+  Tooltip,
+  Legend
 } from "chart.js";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Legend, Tooltip);
+ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function IndustryTrendChart({ data }) {
   const grouped = {};
@@ -18,17 +18,14 @@ function IndustryTrendChart({ data }) {
     if (!grouped[entry.industry]) {
       grouped[entry.industry] = {};
     }
-    grouped[entry.industry][entry.year] = (grouped[entry.industry][entry.year] || 0) + entry.funding;
+    grouped[entry.industry][entry.year] = (grouped[entry.industry][entry.year] || 0) + entry.amount;
   });
 
-  const years = Array.from(new Set(data.map(d => d.year))).sort();
+  const years = Array.from(new Set(data.map(d => d.year))).sort((a, b) => a - b);
 
-  // Helper to generate bright, readable colors
   const getRandomColor = () => {
-    const r = Math.floor(100 + Math.random() * 155);
-    const g = Math.floor(100 + Math.random() * 155);
-    const b = Math.floor(100 + Math.random() * 155);
-    return `rgba(${r}, ${g}, ${b}, 0.9)`;
+    const hue = Math.floor(Math.random() * 360);
+    return `hsl(${hue}, 70%, 50%)`;
   };
 
   const datasets = Object.entries(grouped).map(([industry, yearData]) => ({
@@ -37,8 +34,8 @@ function IndustryTrendChart({ data }) {
     borderColor: getRandomColor(),
     backgroundColor: "transparent",
     borderWidth: 3,
-    pointRadius: 5,
-    pointHoverRadius: 7,
+    pointRadius: 4,
+    pointHoverRadius: 6,
     tension: 0.3,
   }));
 
@@ -47,11 +44,29 @@ function IndustryTrendChart({ data }) {
     datasets,
   };
 
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "bottom" },
+      tooltip: { mode: "index", intersect: false },
+    },
+    scales: {
+      x: {
+        title: { display: true, text: "Year" },
+      },
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: "Funding Amount ($)" },
+      },
+    },
+  };
+
   return (
-    <div className="mb-8">
-     <h2 className="text-xl font-semibold mb-2">Funding Trends by Industry</h2>
-     <Line data={chartData} options={chartOptions} />
+    <div>
+      <h2 className="text-xl font-semibold mb-2">Funding Trends by Industry</h2>
+      <Line data={chartData} options={chartOptions} />
     </div>
-    );
-  
-  }
+  );
+}
+
+export default IndustryTrendChart;
